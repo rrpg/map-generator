@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <stdio.h>
 
 #define WIDTH 1000
 #define HEIGHT 1000
@@ -209,7 +210,115 @@ void fillMap(float map[HEIGHT][WIDTH], float *min, float *max)
 
 void printMap(float map[HEIGHT][WIDTH], float min, float max)
 {
+	//set up some variables
+	float diff = max - min,
+		  flood = 0.5f,//flood level
+		  mount = 0.85f;//mountain level
 
+	flood *= diff;
+	mount *= diff;
+
+	int i,j,k;
+
+	//these can be changed for interesting results
+	s_color landlow, landhigh, waterlow, waterhigh, mountlow, mounthigh;
+
+	landlow = color(0, 64, 0);
+	landhigh = color(116, 182, 133);
+	waterlow = color(55, 0, 0);
+	waterhigh = color(106, 53, 0);
+	mountlow = color(147, 157, 167);
+	mounthigh = color(226, 223, 216);
+
+	//3.0 output to file
+	//3.1 Begin the file
+	//3.1.1 open output file
+	FILE* bmp;
+	bmp = fopen("file.bmp", "wb");
+	if (bmp == NULL){
+		printf("Target file opening error");
+		exit(0);
+	}
+
+	//3.1.2 copy the header
+	//3.1.2.1 magic number
+	fputc((char)66, bmp);
+	fputc((char)77, bmp);
+
+	//~//3.1.2.2 filsize/unused space
+	for (i = 0; i < 8; i++) {
+		fputc((char)0, bmp);
+	}
+
+	//~//3.1.2.3 data offset
+	fputc((char)54, bmp);
+
+	//~//3.1.2.4 unused space
+	for (i = 0; i < 3; i++) {
+		fputc((char)0, bmp);
+	}
+
+	//~//3.1.2.5 header size
+	fputc((char)40, bmp);
+
+	//~//3.1.2.6 unused space
+	for (i = 0; i < 3; i++) {
+		fputc((char)0, bmp);
+	}
+
+	//~//3.1.2.7 file width (trickier)
+	fputc((char)(WIDTH % 256), bmp);
+	fputc((char)((WIDTH>>8)%256), bmp);
+	fputc((char)((WIDTH>>16)%256), bmp);
+	fputc((char)((WIDTH>>24)%256), bmp);
+
+	//~//3.1.2.8 file height (trickier)
+	fputc((char)(HEIGHT%256), bmp);
+	fputc((char)((HEIGHT>>8)%256), bmp);
+	fputc((char)((HEIGHT>>16)%256), bmp);
+	fputc((char)((HEIGHT>>24)%256), bmp);
+
+	//~//3.1.2.9 color planes
+	fputc((char)1, bmp);
+	fputc((char)0, bmp);
+
+	//~//3.1.2.10 bit depth
+	fputc((char)24, bmp);
+
+	//~//3.1.2.11 the rest
+	for (i = 0; i < 25; i++) {
+		fputc((char)0, bmp);
+	}
+
+	//3.2 put in the elements of the array
+	s_color newcolor = color(0, 0, 0);
+	for (i = (HEIGHT - 1); i >= 0; i--) {//bitmaps start with the bottom row, and work their way up...
+		for (j = 0; j < WIDTH; j++) {//...but still go left to right
+			map[j][i] -= min;
+			//if this point is below the floodline...
+			if (map[j][i] < flood)
+				newcolor=lerp(waterlow,waterhigh,map[j][i]/flood);
+
+			//if this is above the mountain line...
+			else if (map[j][i]>mount)
+				newcolor=lerp(mountlow,mounthigh,(map[j][i]-mount)/(diff-mount));
+
+			//if this is regular land
+			else
+				newcolor=lerp(landlow,landhigh,(map[j][i]-flood)/(mount-flood));
+
+			fputc((char)(newcolor.v[0]), bmp);//blue
+			fputc((char)(newcolor.v[1]), bmp);//green
+			fputc((char)(newcolor.v[2]), bmp);//red
+		}
+		//round off the row
+		for (k = 0; k < (WIDTH % 4); k++) {
+			fputc((char)0, bmp);
+		}
+	}
+
+	//3.3 end the file
+	fclose(bmp);
 }
 
 void printResult(time_t beginning, time_t end)
