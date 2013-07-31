@@ -1,4 +1,5 @@
 #include <time.h>
+#include <stdlib.h>
 #include <fcntl.h>
 #include <unistd.h>
 
@@ -18,7 +19,7 @@ void printResult(time_t beginning, time_t end);
 int fasterFloor(float value);
 float dotproduct(float grad[], float x, float y);
 s_color lerp(s_color c1, s_color c2, float value);
-unsigned int get_random_int(unsigned int min, unsigned int max);
+unsigned int get_random_int(unsigned int max);
 
 int main()
 {
@@ -28,6 +29,9 @@ int main()
 
 	beginning = time(NULL);
 	min = max = 0.0;
+
+	// set the random seed
+	srand((unsigned)beginning);
 
 	fillMap(map, &min, &max);
 	printMap(map, min, max);
@@ -81,19 +85,13 @@ s_color lerp(s_color c1, s_color c2, float value)
 	return tcolor;
 }
 
-/**
- * Returns a randomly generated int.
- * Uses /dev/urandom
- * @TODO Has to be improved to work on non unix system
- */
-unsigned int get_random_int(unsigned int min, unsigned int max)
+unsigned int get_random_int(unsigned int max)
 {
-	int randomData = open("/dev/urandom", O_RDONLY);
-	unsigned int rInt;
-	read(randomData, &rInt, sizeof rInt);
+	int r;
+	float s;
 
-	rInt = rInt % (max - min) + min;
-	close(randomData);
+	r = rand();
+	s = (float)(r & 0x7fff)/(float)0x7fff;
 
-	return rInt;
+	return (s * max);
 }
