@@ -20,6 +20,7 @@ int main()
 	float min, max;
 
 	beginning = time(NULL);
+	min = max = 0.0;
 
 	fillMap(map, min, max);
 	printMap(map, min, max);
