@@ -13,6 +13,16 @@ typedef struct {
 	unsigned char v[3];
 } s_color;
 
+s_color color(int r, int g, int b)
+{
+	s_color c;
+	c.v[0] = r;
+	c.v[1] = g;
+	c.v[2] = b;
+
+	return c;
+}
+
 void fillMap(float map[HEIGHT][WIDTH], float *min, float *max);
 void printMap(float map[HEIGHT][WIDTH], float min, float max);
 void printResult(time_t beginning, time_t end);
