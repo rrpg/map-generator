@@ -9,7 +9,7 @@ typedef struct {
 	unsigned char v[3];
 } s_color;
 
-void fillMap(float map[HEIGHT][WIDTH], float min, float max);
+void fillMap(float map[HEIGHT][WIDTH], float *min, float *max);
 void printMap(float map[HEIGHT][WIDTH], float min, float max);
 void printResult(time_t beginning, time_t end);
 
@@ -22,7 +22,7 @@ int main()
 	beginning = time(NULL);
 	min = max = 0.0;
 
-	fillMap(map, min, max);
+	fillMap(map, &min, &max);
 	printMap(map, min, max);
 
 	printResult(beginning, time(NULL));
@@ -30,7 +30,7 @@ int main()
 	return 1;
 }
 
-void fillMap(float map[HEIGHT][WIDTH], float min, float max)
+void fillMap(float map[HEIGHT][WIDTH], float *min, float *max)
 {
 
 }
