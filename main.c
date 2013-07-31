@@ -1,4 +1,6 @@
 #include <time.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define WIDTH 1000
 #define HEIGHT 1000
@@ -12,9 +14,11 @@ typedef struct {
 void fillMap(float map[HEIGHT][WIDTH], float *min, float *max);
 void printMap(float map[HEIGHT][WIDTH], float min, float max);
 void printResult(time_t beginning, time_t end);
+
 int fasterFloor(float value);
 float dotproduct(float grad[], float x, float y);
 s_color lerp(s_color c1, s_color c2, float value);
+unsigned int get_random_int(unsigned int min, unsigned int max);
 
 int main()
 {
@@ -77,3 +81,19 @@ s_color lerp(s_color c1, s_color c2, float value)
 	return tcolor;
 }
 
+/**
+ * Returns a randomly generated int.
+ * Uses /dev/urandom
+ * @TODO Has to be improved to work on non unix system
+ */
+unsigned int get_random_int(unsigned int min, unsigned int max)
+{
+	int randomData = open("/dev/urandom", O_RDONLY);
+	unsigned int rInt;
+	read(randomData, &rInt, sizeof rInt);
+
+	rInt = rInt % (max - min) + min;
+	close(randomData);
+
+	return rInt;
+}
