@@ -296,16 +296,17 @@ void printMap(float map[HEIGHT][WIDTH], float min, float max)
 		for (j = 0; j < WIDTH; j++) {//...but still go left to right
 			map[j][i] -= min;
 			//if this point is below the floodline...
-			if (map[j][i] < flood)
-				newcolor=lerp(waterlow,waterhigh,map[j][i]/flood);
-
+			if (map[j][i] < flood) {
+				newcolor = lerp(waterlow, waterhigh, map[j][i] / flood);
+			}
 			//if this is above the mountain line...
-			else if (map[j][i]>mount)
-				newcolor=lerp(mountlow,mounthigh,(map[j][i]-mount)/(diff-mount));
-
+			else if (map[j][i] > mount) {
+				newcolor = lerp(mountlow, mounthigh, (map[j][i] - mount) / (diff - mount));
+			}
 			//if this is regular land
-			else
-				newcolor=lerp(landlow,landhigh,(map[j][i]-flood)/(mount-flood));
+			else {
+				newcolor = lerp(landlow, landhigh, (map[j][i] - flood) / (mount - flood));
+			}
 
 			fputc((char)(newcolor.v[0]), bmp);//blue
 			fputc((char)(newcolor.v[1]), bmp);//green
