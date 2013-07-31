@@ -26,6 +26,8 @@ int main()
 	printMap(map, min, max);
 
 	printResult(beginning, time(NULL));
+
+	return 1;
 }
 
 void fillMap(float map[HEIGHT][WIDTH], float min, float max)
