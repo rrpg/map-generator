@@ -11,3 +11,5 @@ void clearMap(s_map* map);
 void fillMap(s_map* map, float *min, float *max);
 void printMap(s_map* map, float min, float max);
 void printResult(time_t beginning, time_t end);
+
+#define MIN(a, b) (a < b ? a : b)

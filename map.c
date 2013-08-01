@@ -351,12 +351,7 @@ s_color lerp(s_color c1, s_color c2, float value)
 
 	int g;
 	for (g = 0; g < 3; g++) {
-		if (c1.v[g] > c2.v[g]) {
-			tcolor.v[g] = c2.v[g] + (unsigned char) ((float)(c1.v[g] - c2.v[g]) * value);
-		}
-		else {
-			tcolor.v[g] = c1.v[g] + (unsigned char) ((float)(c2.v[g] - c1.v[g]) * value);
-		}
+		tcolor.v[g] = MIN(c1.v[g], c2.v[g]) + (unsigned char) abs((float)(c2.v[g] - c1.v[g]) * value);
 	}
 
 	return tcolor;
