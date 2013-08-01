@@ -21,11 +21,6 @@ s_map initMap(int width, int height)
 
 	map.grid = (float**) malloc(height * sizeof(float*));
 
-	int i;
-	for (i = 0; i < width; i++) {
-		map.grid[i] = (float*)malloc(width);
-	}
-
 	return map;
 }
 
@@ -91,6 +86,10 @@ void fillMap(s_map* map, float *min, float *max)
 
 	//for each pixel...
 	for (i = 0; i < (*map).height; ++i) {
+		// Init the second level on the fly, to avoid a loop of width iterations
+		// during the initialization
+		(*map).grid[i] = (float*) malloc((*map).width * sizeof(float));
+
 		for (j = 0; j < (*map).width; ++j) {
 			//get the value for this pixel by adding successive layers
 			amplitude = 1.0f;
