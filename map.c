@@ -176,7 +176,7 @@ void fillMap(s_map* map, float *min, float *max)
 			}
 
 			// put it in the map
-			(*map).grid[j][i] = pixel_value;
+			(*map).grid[i][j] = pixel_value;
 
 			// do some quick checks
 			if (pixel_value < *min) {
@@ -275,18 +275,18 @@ void printMap(s_map* map, float min, float max)
 	s_color newcolor = color(0, 0, 0);
 	for (i = ((*map).height - 1); i >= 0; i--) {//bitmaps start with the bottom row, and work their way up...
 		for (j = 0; j < (*map).width; j++) {//...but still go left to right
-			(*map).grid[j][i] -= min;
+			(*map).grid[i][j] -= min;
 			//if this point is below the floodline...
-			if ((*map).grid[j][i] < flood) {
-				newcolor = lerp(waterlow, waterhigh, (*map).grid[j][i] / flood);
+			if ((*map).grid[i][j] < flood) {
+				newcolor = lerp(waterlow, waterhigh, (*map).grid[i][j] / flood);
 			}
 			//if this is above the mountain line...
-			else if ((*map).grid[j][i] > mount) {
-				newcolor = lerp(mountlow, mounthigh, ((*map).grid[j][i] - mount) / (diff - mount));
+			else if ((*map).grid[i][j] > mount) {
+				newcolor = lerp(mountlow, mounthigh, ((*map).grid[i][j] - mount) / (diff - mount));
 			}
 			//if this is regular land
 			else {
-				newcolor = lerp(landlow, landhigh, ((*map).grid[j][i] - flood) / (mount - flood));
+				newcolor = lerp(landlow, landhigh, ((*map).grid[i][j] - flood) / (mount - flood));
 			}
 
 			fputc((char)(newcolor.v[0]), bmp);//blue
