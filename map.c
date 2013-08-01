@@ -7,12 +7,18 @@
 #include "color.h"
 #include "map.h"
 
+
+/*
+ * Local functions
+ */
 int fasterFloor(float value);
 float dotproduct(float grad[], float x, float y);
 s_color lerp(s_color c1, s_color c2, float value);
 unsigned int get_random_int(unsigned int max);
 
-
+/**
+ * Creates a s_map instance, set its dimensions and the global size of the grid
+ */
 s_map initMap(int width, int height)
 {
 	s_map map;
@@ -24,12 +30,17 @@ s_map initMap(int width, int height)
 	return map;
 }
 
+/**
+ * Frees the map's grid
+ */
 void clearMap(s_map* map)
 {
 	free((*map).grid);
 }
 
-
+/**
+ * Generate the map using the simplex noise algorithm.
+ */
 void fillMap(s_map* map, float *min, float *max)
 {
 	//set up some variables
@@ -188,6 +199,9 @@ void fillMap(s_map* map, float *min, float *max)
 	}
 }
 
+/**
+ * Print the map in a BMP file
+ */
 void printMap(s_map* map, float min, float max)
 {
 	//set up some variables
@@ -302,22 +316,34 @@ void printMap(s_map* map, float min, float max)
 	fclose(bmp);
 }
 
+/**
+ * Shows the time spent to generate the map, just for benchmarks, kindof dummy
+ */
 void printResult(time_t beginning, time_t end)
 {
 	printf("%d\n", (int) (end - beginning));
 }
 
-
+/**
+ * Faster version of the floor function
+ */
 int fasterFloor(float value)
 {
 	return value >= 0 ? (int) value : (int) value - 1;
 }
 
+/**
+ *
+ */
 float dotproduct(float grad[], float x, float y)
 {
 	return grad[0] * x + grad[1] * y;
 }
 
+/**
+ * Calculate a color result of a linear interpolation from two colors and a
+ * ratio
+ */
 s_color lerp(s_color c1, s_color c2, float value)
 {
 	s_color tcolor;
@@ -336,6 +362,9 @@ s_color lerp(s_color c1, s_color c2, float value)
 	return tcolor;
 }
 
+/**
+ * Generate pseudo random integer between 0 and max
+ */
 unsigned int get_random_int(unsigned int max)
 {
 	int r;
