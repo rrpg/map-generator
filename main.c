@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include <time.h>
 #include <stdlib.h>
 #include "map.h"
@@ -6,14 +7,28 @@
 #define MAP_HEIGHT 1000
 
 
-int main()
+int main(int argc, char* argv[])
 {
 	time_t beginning;
 	float min, max;
 	s_map map;
+	int c;
+
 	int width, height;
 	width = MAP_WIDTH;
 	height = MAP_HEIGHT;
+	while ((c = getopt (argc, argv, "w:h:")) != -1) {
+		switch (c) {
+			case 'w':
+				width = atoi(optarg);
+				break;
+			case 'h':
+				height = atoi(optarg);
+				break;
+			default:
+				abort();
+		}
+	}
 
 	beginning = time(NULL);
 	min = max = 0.0;
