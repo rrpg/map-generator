@@ -97,8 +97,7 @@ void fillMap(s_map* map, float *min, float *max)
 			pixel_value = 0.0f;
 
 			// use threads here
-			for (k = 0; k < octaves; ++k)
-			{
+			for (k = 0; k < octaves; ++k) {
 				//get the x and y values. These are values from the grid in normal (simplex) space
 				x = (float)j * frequency;
 				y = (float)i * frequency;
