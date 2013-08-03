@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
 	time_t beginning;
 	float min, max;
 	s_map map;
-	int c;
+	int c, pResult;
 
 	int width, height;
 	width = MAP_WIDTH;
@@ -38,10 +38,10 @@ int main(int argc, char* argv[])
 
 	map = initMap(width, height);
 	fillMap(&map, &min, &max);
-	printMap(&map, min, max);
+	pResult = printMap(&map, min, max);
 
 	printResult(beginning, time(NULL));
 	free(map.grid);
 
-	return 1;
+	return pResult;
 }
