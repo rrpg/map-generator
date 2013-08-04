@@ -335,7 +335,7 @@ int fasterFloor(float value)
 }
 
 /**
- *
+ * Dotproduct between a gradient value and the current position
  */
 float dotproduct(float grad[], float x, float y)
 {
