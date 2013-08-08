@@ -202,7 +202,7 @@ void fillMap(s_map* map, float *min, float *max)
 /**
  * Print the map in a BMP file
  */
-int printMap(s_map* map, float min, float max)
+int printMap(s_map* map, float min, float max, char* filename)
 {
 	//set up some variables
 	float diff = max - min,
@@ -228,7 +228,7 @@ int printMap(s_map* map, float min, float max)
 	//3.1 Begin the file
 	//3.1.1 open output file
 	FILE* bmp;
-	bmp = fopen("file.bmp", "wb");
+	bmp = fopen(filename, "wb");
 	if (bmp == NULL){
 		printf("Target file opening error");
 		return 1;
