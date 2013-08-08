@@ -25,7 +25,7 @@ s_map initMap(int width, int height)
 	map.width = width;
 	map.height = height;
 
-	map.grid = (float**) malloc(height * sizeof(float*));
+	map.grid = (s_cell*) malloc(height * width * sizeof(s_cell));
 
 	return map;
 }
@@ -97,10 +97,6 @@ void fillMap(s_map* map, float *min, float *max)
 
 	//for each pixel...
 	for (i = 0; i < (*map).height; ++i) {
-		// Init the second level on the fly, to avoid a loop of width iterations
-		// during the initialization
-		(*map).grid[i] = (float*) malloc((*map).width * sizeof(float));
-
 		for (j = 0; j < (*map).width; ++j) {
 			//get the value for this pixel by adding successive layers
 			amplitude = 1.0f;
@@ -186,7 +182,9 @@ void fillMap(s_map* map, float *min, float *max)
 			}
 
 			// put it in the map
-			(*map).grid[i][j] = pixel_value;
+			(*map).grid[i + j * (*map).width].x = i;
+			(*map).grid[i + j * (*map).width].y = j;
+			(*map).grid[i + j * (*map).width].altitude = pixel_value;
 
 			// do some quick checks
 			if (pixel_value < *min) {
@@ -286,20 +284,22 @@ int printMap(s_map* map, float min, float max, char* filename)
 
 	//3.2 put in the elements of the array
 	s_color newcolor = color(0, 0, 0);
+	s_cell* current;
 	for (i = ((*map).height - 1); i >= 0; i--) {//bitmaps start with the bottom row, and work their way up...
 		for (j = 0; j < (*map).width; j++) {//...but still go left to right
-			(*map).grid[i][j] -= min;
+			current = &(*map).grid[i + j * (*map).width];
+			(*current).altitude -= min;
 			//if this point is below the floodline...
-			if ((*map).grid[i][j] < flood) {
-				newcolor = lerp(waterlow, waterhigh, (*map).grid[i][j] / flood);
+			if ((*current).altitude < flood) {
+				newcolor = lerp(waterlow, waterhigh, (*current).altitude / flood);
 			}
 			//if this is above the mountain line...
-			else if ((*map).grid[i][j] > mount) {
-				newcolor = lerp(mountlow, mounthigh, ((*map).grid[i][j] - mount) / (diff - mount));
+			else if ((*current).altitude > mount) {
+				newcolor = lerp(mountlow, mounthigh, ((*current).altitude - mount) / (diff - mount));
 			}
 			//if this is regular land
 			else {
-				newcolor = lerp(landlow, landhigh, ((*map).grid[i][j] - flood) / (mount - flood));
+				newcolor = lerp(landlow, landhigh, ((*current).altitude - flood) / (mount - flood));
 			}
 
 			fputc((char)(newcolor.v[2]), bmp);//blue
