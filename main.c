@@ -5,6 +5,7 @@
 
 #define MAP_WIDTH 1000
 #define MAP_HEIGHT 1000
+#define DEFAULT_FILENAME "file.bmp"
 
 
 int main(int argc, char* argv[])
@@ -13,17 +14,22 @@ int main(int argc, char* argv[])
 	float min, max;
 	s_map map;
 	int c, pResult;
+	char* file;
 
 	int width, height;
 	width = MAP_WIDTH;
 	height = MAP_HEIGHT;
-	while ((c = getopt (argc, argv, "w:h:")) != -1) {
+	file = DEFAULT_FILENAME;
+	while ((c = getopt (argc, argv, "w:h:f:")) != -1) {
 		switch (c) {
 			case 'w':
 				width = atoi(optarg);
 				break;
 			case 'h':
 				height = atoi(optarg);
+				break;
+			case 'f':
+				file = optarg;
 				break;
 			default:
 				abort();
@@ -38,7 +44,7 @@ int main(int argc, char* argv[])
 
 	map = initMap(width, height);
 	fillMap(&map, &min, &max);
-	pResult = printMap(&map, min, max);
+	pResult = printMap(&map, min, max, file);
 
 	printResult(beginning, time(NULL));
 	free(map.grid);
