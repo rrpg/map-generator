@@ -17,13 +17,13 @@ And run it:
 
 You can use the following arguments:
 ```
-# Set the map width (in pixels)
+# Set the map width (in pixels), default value is 1000
 ./map -w %d
 
-# Set the map height (in pixels)
+# Set the map height (in pixels), default value is 1000
 ./map -h %d
 
-# Set the filename where the map will be drawn (BMP file)
+# Set the filename where the map will be drawn (BMP file), default value is file.bmp
 ./map -f %s
 ```
 
