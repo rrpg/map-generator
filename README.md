@@ -27,6 +27,10 @@ You can use the following arguments:
 ./map -f %s
 ```
 
+## Result
+
+You can find some generation examples in the examples folder.
+
 ## What's next?
 
 - I'll add another option to return the map details to be usable by another
