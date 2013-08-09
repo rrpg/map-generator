@@ -96,8 +96,8 @@ void fillMap(s_map* map, float *min, float *max)
 	}
 
 	//for each pixel...
-	for (i = 0; i < (*map).height; ++i) {
-		for (j = 0; j < (*map).width; ++j) {
+	for (j = 0; j < (*map).height; ++j) {
+		for (i = 0; i < (*map).width; ++i) {
 			//get the value for this pixel by adding successive layers
 			amplitude = 1.0f;
 			frequency = 1.0f / (float) (*map).width;
@@ -106,8 +106,8 @@ void fillMap(s_map* map, float *min, float *max)
 			// use threads here
 			for (k = 0; k < octaves; ++k) {
 				//get the x and y values. These are values from the grid in normal (simplex) space
-				x = (float)j * frequency;
-				y = (float)i * frequency;
+				x = (float)i * frequency;
+				y = (float)j * frequency;
 
 				//get the bottom-left corner of the simplex in skewed space
 				skew_value = (x + y) * general_skew;
@@ -285,8 +285,8 @@ int printMap(s_map* map, float min, float max, char* filename)
 	//3.2 put in the elements of the array
 	s_color newcolor = color(0, 0, 0);
 	s_cell* current;
-	for (i = ((*map).height - 1); i >= 0; i--) {//bitmaps start with the bottom row, and work their way up...
-		for (j = 0; j < (*map).width; j++) {//...but still go left to right
+	for (j = ((*map).height - 1); j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
+		for (i = 0; i < (*map).width; i++) {//...but still go left to right
 			current = &(*map).grid[i + j * (*map).width];
 			(*current).altitude -= min;
 			//if this point is below the floodline...
