@@ -215,12 +215,12 @@ int printMap(s_map* map, float min, float max, char* filename)
 	int i,j,k;
 
 	//these can be changed for interesting results
-	s_color landlow, landhigh, waterlow, waterhigh, mountlow, mounthigh;
+	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh;
 
-	landlow = color(0, 64, 0);
-	landhigh = color(116, 182, 133);
 	waterlow = color(55, 0, 0);
 	waterhigh = color(106, 53, 0);
+	landlow = color(0, 64, 0);
+	landhigh = color(116, 182, 133);
 	mountlow = color(147, 157, 167);
 	mounthigh = color(226, 223, 216);
 
