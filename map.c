@@ -291,14 +291,17 @@ int printMap(s_map* map, float min, float max, char* filename)
 			(*current).altitude -= min;
 			//if this point is below the floodline...
 			if ((*current).altitude < flood) {
+				(*current).ground_type = GROUND_WATER;
 				newcolor = lerp(waterlow, waterhigh, (*current).altitude / flood);
 			}
 			//if this is above the mountain line...
 			else if ((*current).altitude > mount) {
+				(*current).ground_type = GROUND_MONTAIN;
 				newcolor = lerp(mountlow, mounthigh, ((*current).altitude - mount) / (diff - mount));
 			}
 			//if this is regular land
 			else {
+				(*current).ground_type = GROUND_LAND;
 				newcolor = lerp(landlow, landhigh, ((*current).altitude - flood) / (mount - flood));
 			}
 
