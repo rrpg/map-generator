@@ -1,7 +1,14 @@
 #define VISUAL_DISPLAY_MODE 0x01
 
 typedef struct {
-	float** grid;
+	int x;
+	int y;
+	float altitude;
+	int ground_type;
+} s_cell;
+
+typedef struct {
+	s_cell* grid;
 	int width;
 	int height;
 } s_map;
