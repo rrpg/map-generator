@@ -1,4 +1,4 @@
-# Simplex algorithm implementation
+# Map generator - Simplex noise
 
 C Implementation of the Simplex algorithm to randomly generate maps.
 This is an adaptation of this c++ version: https://code.google.com/p/fractalterraingeneration/downloads/detail?name=simplexnoise.1.0.cpp&can=2&q=
