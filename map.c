@@ -217,12 +217,12 @@ int printMap(s_map* map, float min, float max, char* filename)
 	//these can be changed for interesting results
 	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh;
 
-	waterlow = color(55, 0, 0);
-	waterhigh = color(106, 53, 0);
+	waterlow = color(0, 0, 55);
+	waterhigh = color(0, 53, 106);
 	landlow = color(0, 64, 0);
-	landhigh = color(116, 182, 133);
-	mountlow = color(147, 157, 167);
-	mounthigh = color(226, 223, 216);
+	landhigh = color(133, 182, 116);
+	mountlow = color(167, 157, 147);
+	mounthigh = color(216, 223, 226);
 
 	//3.0 output to file
 	//3.1 Begin the file
@@ -302,9 +302,9 @@ int printMap(s_map* map, float min, float max, char* filename)
 				newcolor = lerp(landlow, landhigh, ((*map).grid[i][j] - flood) / (mount - flood));
 			}
 
-			fputc((char)(newcolor.v[0]), bmp);//blue
+			fputc((char)(newcolor.v[2]), bmp);//blue
 			fputc((char)(newcolor.v[1]), bmp);//green
-			fputc((char)(newcolor.v[2]), bmp);//red
+			fputc((char)(newcolor.v[0]), bmp);//red
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {
