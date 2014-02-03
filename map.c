@@ -225,9 +225,10 @@ int printMap(s_map* map, float min, float max, char* filename)
 	//3.0 output to file
 	//3.1 Begin the file
 	//3.1.1 open output file
-	FILE* bmp;
+	FILE *bmp, *txt;
 	bmp = fopen(filename, "wb");
-	if (bmp == NULL){
+	txt = fopen("file.txt", "w");
+	if (bmp == NULL || txt == NULL){
 		printf("Target file opening error");
 		return 1;
 	}
@@ -308,6 +309,8 @@ int printMap(s_map* map, float min, float max, char* filename)
 			fputc((char)(newcolor.v[2]), bmp);//blue
 			fputc((char)(newcolor.v[1]), bmp);//green
 			fputc((char)(newcolor.v[0]), bmp);//red
+
+			fprintf(txt, "%d %d %d\n", (*current).ground_type, i, j);
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {
@@ -317,6 +320,7 @@ int printMap(s_map* map, float min, float max, char* filename)
 
 	//3.3 end the file
 	fclose(bmp);
+	fclose(txt);
 
 	return 0;
 }
