@@ -1,11 +1,12 @@
 #include <unistd.h>
 #include <time.h>
+#include <string.h>
 #include <stdlib.h>
 #include "map.h"
 
 #define MAP_WIDTH 1000
 #define MAP_HEIGHT 1000
-#define DEFAULT_FILENAME "file.bmp"
+#define DEFAULT_FILENAME "file"
 
 
 int main(int argc, char* argv[])
@@ -44,7 +45,7 @@ int main(int argc, char* argv[])
 
 	map = initMap(width, height);
 	fillMap(&map, &min, &max);
-	pResult = printMap(&map, min, max, file);
+	pResult = printMap(&map, min, max, file, strlen(file));
 
 	printResult(beginning, time(NULL));
 	free(map.grid);

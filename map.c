@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <stdio.h>
 #include <pthread.h>
+#include <string.h>
 #include "color.h"
 #include "map.h"
 
@@ -200,7 +201,7 @@ void fillMap(s_map* map, float *min, float *max)
 /**
  * Print the map in a BMP file
  */
-int printMap(s_map* map, float min, float max, char* filename)
+int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 {
 	//set up some variables
 	float diff = max - min,
@@ -211,6 +212,11 @@ int printMap(s_map* map, float min, float max, char* filename)
 	mount *= diff;
 
 	int i,j,k;
+	char bmpfile[filename_len + 4], txtfile[filename_len + 4];
+	strcpy(bmpfile, filename);
+	strcat(bmpfile, ".bmp");
+	strcpy(txtfile, filename);
+	strcat(txtfile, ".txt");
 
 	//these can be changed for interesting results
 	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh;
@@ -226,8 +232,8 @@ int printMap(s_map* map, float min, float max, char* filename)
 	//3.1 Begin the file
 	//3.1.1 open output file
 	FILE *bmp, *txt;
-	bmp = fopen(filename, "wb");
-	txt = fopen("file.txt", "w");
+	bmp = fopen(bmpfile, "wb");
+	txt = fopen(txtfile, "w");
 	if (bmp == NULL || txt == NULL){
 		printf("Target file opening error");
 		return 1;
