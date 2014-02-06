@@ -302,7 +302,7 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 			}
 			//if this is above the mountain line...
 			else if ((*current).altitude > mount) {
-				(*current).ground_type = GROUND_MONTAIN;
+				(*current).ground_type = GROUND_MOUNTAIN;
 				newcolor = lerp(mountlow, mounthigh, ((*current).altitude - mount) / (diff - mount));
 			}
 			//if this is regular land

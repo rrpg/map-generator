@@ -1,7 +1,7 @@
 #define VISUAL_DISPLAY_MODE 0x01
 #define GROUND_WATER 0x01
 #define GROUND_LAND 0x04
-#define GROUND_MONTAIN 0x08
+#define GROUND_MOUNTAIN 0x08
 
 typedef struct {
 	int x;
