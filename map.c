@@ -293,7 +293,7 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 	s_cell* current;
 	for (j = map->height - 1; j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
 		for (i = 0; i < map->width; i++) {//...but still go left to right
-			int currentIndex;
+			int directions, currentIndex;
 
 			currentIndex = i + j * map->width;
 			current = &(map->grid[currentIndex]);
@@ -318,7 +318,24 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 			fputc((char)(newcolor.v[1]), bmp);//green
 			fputc((char)(newcolor.v[0]), bmp);//red
 
-			fprintf(txt, "%d %d %d\n", (*current).ground_type, i, j);
+			directions = 0;
+			// WEST
+			if (i > 0 && map->grid[currentIndex - 1].altitude >= flood) {
+				directions |= BIT_CELL_WEST;
+			}
+			// EAST
+			if (i < map->width - 1 && map->grid[currentIndex + 1].altitude - min >= flood) {
+				directions |= BIT_CELL_EAST;
+			}
+			// NORTH
+			if (j > 0 && map->grid[currentIndex - map->width].altitude - min >= flood) {
+				directions |= BIT_CELL_NORTH;
+			}
+			// SOUTH
+			if (j < map->height - 1 && map->grid[currentIndex + map->width].altitude >= flood) {
+				directions |= BIT_CELL_SOUTH;
+			}
+			fprintf(txt, "%d %d %d %d\n", (*current).ground_type, i, j, directions);
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {

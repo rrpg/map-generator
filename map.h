@@ -3,6 +3,11 @@
 #define GROUND_LAND 0x04
 #define GROUND_MOUNTAIN 0x08
 
+#define BIT_CELL_NORTH  0x01
+#define BIT_CELL_EAST   0x02
+#define BIT_CELL_SOUTH  0x04
+#define BIT_CELL_WEST   0x08
+
 typedef struct {
 	int x;
 	int y;
