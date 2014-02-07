@@ -291,24 +291,24 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 	//3.2 put in the elements of the array
 	s_color newcolor = color(0, 0, 0);
 	s_cell* current;
-	for (j = ((*map).height - 1); j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
-		for (i = 0; i < (*map).width; i++) {//...but still go left to right
-			current = &(*map).grid[i + j * (*map).width];
-			(*current).altitude -= min;
+	for (j = map->height - 1; j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
+		for (i = 0; i < map->width; i++) {//...but still go left to right
+			current = &(map->grid[i + j * map->width]);
+			current->altitude -= min;
 			//if this point is below the floodline...
-			if ((*current).altitude < flood) {
-				(*current).ground_type = GROUND_WATER;
-				newcolor = lerp(waterlow, waterhigh, (*current).altitude / flood);
+			if (current->altitude < flood) {
+				current->ground_type = GROUND_WATER;
+				newcolor = lerp(waterlow, waterhigh, current->altitude / flood);
 			}
 			//if this is above the mountain line...
-			else if ((*current).altitude > mount) {
-				(*current).ground_type = GROUND_MOUNTAIN;
-				newcolor = lerp(mountlow, mounthigh, ((*current).altitude - mount) / (diff - mount));
+			else if (current->altitude > mount) {
+				current->ground_type = GROUND_MOUNTAIN;
+				newcolor = lerp(mountlow, mounthigh, (current->altitude - mount) / (diff - mount));
 			}
 			//if this is regular land
 			else {
-				(*current).ground_type = GROUND_LAND;
-				newcolor = lerp(landlow, landhigh, ((*current).altitude - flood) / (mount - flood));
+				current->ground_type = GROUND_LAND;
+				newcolor = lerp(landlow, landhigh, (current->altitude - flood) / (mount - flood));
 			}
 
 			fputc((char)(newcolor.v[2]), bmp);//blue
