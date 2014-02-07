@@ -293,7 +293,10 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 	s_cell* current;
 	for (j = map->height - 1; j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
 		for (i = 0; i < map->width; i++) {//...but still go left to right
-			current = &(map->grid[i + j * map->width]);
+			int currentIndex;
+
+			currentIndex = i + j * map->width;
+			current = &(map->grid[currentIndex]);
 			current->altitude -= min;
 			//if this point is below the floodline...
 			if (current->altitude < flood) {
