@@ -16,13 +16,18 @@ int main(int argc, char* argv[])
 	s_map map;
 	int c, pResult;
 	char* file;
+	short generateText;
 
 	int width, height;
 	width = MAP_WIDTH;
 	height = MAP_HEIGHT;
 	file = DEFAULT_FILENAME;
-	while ((c = getopt (argc, argv, "w:h:f:")) != -1) {
+	generateText = 0;
+	while ((c = getopt (argc, argv, "tw:h:f:")) != -1) {
 		switch (c) {
+			case 't':
+				generateText = 1;
+				break;
 			case 'w':
 				width = atoi(optarg);
 				break;
@@ -45,7 +50,7 @@ int main(int argc, char* argv[])
 
 	map = initMap(width, height);
 	fillMap(&map, &min, &max);
-	pResult = printMap(&map, min, max, file, strlen(file));
+	pResult = printMap(&map, min, max, file, strlen(file), generateText);
 
 	printResult(beginning, time(NULL));
 	free(map.grid);

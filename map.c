@@ -200,7 +200,7 @@ void fillMap(s_map* map, float *min, float *max)
 /**
  * Print the map in a BMP file
  */
-int printMap(s_map* map, float min, float max, char* filename, int filename_len)
+int printMap(s_map* map, float min, float max, char* filename, int filename_len, short generateText)
 {
 	//set up some variables
 	float diff = max - min,
@@ -232,8 +232,10 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 	//3.1.1 open output file
 	FILE *bmp, *txt;
 	bmp = fopen(bmpfile, "wb");
-	txt = fopen(txtfile, "w");
-	if (bmp == NULL || txt == NULL){
+
+	if (generateText)
+		txt = fopen(txtfile, "w");
+	if (bmp == NULL || (generateText && txt == NULL)){
 		printf("Target file opening error");
 		return 1;
 	}
@@ -318,6 +320,9 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 			fputc((char)(newcolor.v[1]), bmp);//green
 			fputc((char)(newcolor.v[0]), bmp);//red
 
+			if (!generateText)
+				continue;
+
 			directions = 0;
 			// WEST
 			if (i > 0 && map->grid[currentIndex - 1].altitude >= flood) {
@@ -345,7 +350,9 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len)
 
 	//3.3 end the file
 	fclose(bmp);
-	fclose(txt);
+
+	if (generateText)
+		fclose(txt);
 
 	return 0;
 }
