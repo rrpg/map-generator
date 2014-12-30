@@ -7,6 +7,10 @@
 #define BIT_CELL_EAST   0x02
 #define BIT_CELL_SOUTH  0x04
 #define BIT_CELL_WEST   0x08
+#define BIT_CELL_NORTH_WEST 0x10
+#define BIT_CELL_NORTH_EAST 0x20
+#define BIT_CELL_SOUTH_EAST 0x40
+#define BIT_CELL_SOUTH_WEST 0x80
 
 typedef struct {
 	int x;
