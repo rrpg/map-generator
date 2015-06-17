@@ -366,7 +366,7 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 			if (i > 0 && j < map->height - 1 && map->grid[currentIndex -1 + map->width].altitude >= flood) {
 				directions |= BIT_CELL_SOUTH_WEST;
 			}
-			fprintf(txt, "%d %d %d %d %f\n", (*current).ground_type, i, j, directions, ((*current).altitude - flood) * 5000.0 / max);
+			fprintf(txt, "%d %d %d %d %f\n", (*current).ground_type, i, j, directions, ((*current).altitude - flood) * MAX_ALTITUDE / max);
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {
