@@ -342,19 +342,19 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 			}
 
 			// NORTH WEST
-			if (i > 0 && map->grid[currentIndex - 1 - map->width].altitude >= flood) {
+			if (i > 0 && j > 0 && map->grid[currentIndex - 1 - map->width].altitude >= flood) {
 				directions |= BIT_CELL_NORTH_WEST;
 			}
 			// NORTH EAST
-			if (i < map->width - 1 && map->grid[currentIndex + 1 - map->width].altitude - min >= flood) {
+			if (i < map->width - 1 && j > 0 && map->grid[currentIndex + 1 - map->width].altitude - min >= flood) {
 				directions |= BIT_CELL_NORTH_EAST;
 			}
 			// SOUTH EAST
-			if (j > 0 && map->grid[currentIndex + 1 + map->width].altitude - min >= flood) {
+			if (i < map->width - 1 && j < map->height - 1 && map->grid[currentIndex + 1 + map->width].altitude - min >= flood) {
 				directions |= BIT_CELL_SOUTH_EAST;
 			}
 			// SOUTH WEST
-			if (j < map->height - 1 && map->grid[currentIndex -1 + map->width].altitude >= flood) {
+			if (i > 0 && j < map->height - 1 && map->grid[currentIndex -1 + map->width].altitude >= flood) {
 				directions |= BIT_CELL_SOUTH_WEST;
 			}
 			fprintf(txt, "%d %d %d %d\n", (*current).ground_type, i, j, directions);
