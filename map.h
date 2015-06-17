@@ -2,6 +2,7 @@
 #define GROUND_WATER 0x01
 #define GROUND_LAND 0x04
 #define GROUND_MOUNTAIN 0x08
+#define GROUND_SNOW 0x10
 
 #define BIT_CELL_NORTH  0x01
 #define BIT_CELL_EAST   0x02
