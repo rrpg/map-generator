@@ -205,10 +205,12 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 	//set up some variables
 	float diff = max - min,
 		  flood = 0.5f,//flood level
-		  mount = 0.85f;//mountain level
+		  mount = 0.75f,//mountain level
+		  snow = 0.9f;//snow level
 
 	flood *= diff;
 	mount *= diff;
+	snow *= diff;
 
 	int i,j,k;
 	char bmpfile[filename_len + 4], txtfile[filename_len + 4];
@@ -218,14 +220,16 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 	strcat(txtfile, ".txt");
 
 	//these can be changed for interesting results
-	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh;
+	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh, snowlow, snowhigh;
 
 	waterlow = color(0, 0, 55);
 	waterhigh = color(0, 53, 106);
 	landlow = color(0, 64, 0);
 	landhigh = color(133, 182, 116);
-	mountlow = color(167, 157, 147);
-	mounthigh = color(216, 223, 226);
+	mountlow = color(66, 75, 92);
+	mounthigh = color(184, 173, 153);
+	snowlow = color(167, 157, 147);
+	snowhigh = color(216, 223, 226);
 
 	//3.0 output to file
 	//3.1 Begin the file
@@ -304,6 +308,11 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 			if (current->altitude < flood) {
 				current->ground_type = GROUND_WATER;
 				newcolor = lerp(waterlow, waterhigh, current->altitude / flood);
+			}
+			//if this is above the mountain line...
+			else if (current->altitude > snow) {
+				current->ground_type = GROUND_SNOW;
+				newcolor = lerp(snowlow, snowhigh, (current->altitude - snow) / (diff - snow));
 			}
 			//if this is above the mountain line...
 			else if (current->altitude > mount) {
