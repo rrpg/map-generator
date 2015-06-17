@@ -13,6 +13,8 @@
 #define BIT_CELL_SOUTH_EAST 0x40
 #define BIT_CELL_SOUTH_WEST 0x80
 
+#define MAX_ALTITUDE 5000.0
+
 typedef struct {
 	int x;
 	int y;
