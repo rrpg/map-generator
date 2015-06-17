@@ -25,6 +25,9 @@ You can use the following arguments:
 
 # Set the filename where the map will be drawn (BMP file), default value is file.bmp
 ./map -f %s
+
+# Generate a text file with the map informations
+./map -t
 ```
 
 ## Result
@@ -33,8 +36,6 @@ You can find some generation examples in the examples folder.
 
 ## What's next?
 
-- I'll add another option to return the map details to be usable by another
-program for example.
 - I'd like to add beaches in the map, between the water and the land.
 - I'd like to add deserts, depending on the Y value of the pixels in the map (
 deserts will be in the vertical center of the map)
