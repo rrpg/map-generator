@@ -11,7 +11,7 @@
 
 int main(int argc, char* argv[])
 {
-	time_t beginning;
+	time_t seed;
 	float min, max;
 	s_map map;
 	int c, pResult;
@@ -42,17 +42,16 @@ int main(int argc, char* argv[])
 		}
 	}
 
-	beginning = time(NULL);
+	seed = time(NULL);
 	min = max = 0.0;
 
 	// set the random seed
-	srand((unsigned)beginning);
+	srand((unsigned)seed);
 
 	map = initMap(width, height);
 	fillMap(&map, &min, &max);
 	pResult = printMap(&map, min, max, file, strlen(file), generateText);
 
-	printResult(beginning, time(NULL));
 	free(map.grid);
 
 	return pResult;

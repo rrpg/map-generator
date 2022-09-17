@@ -195,6 +195,38 @@ void fillMap(s_map* map, float *min, float *max)
 			}
 		}
 	}
+	// Define the ground types
+	float diff = *max - *min;
+	map->minAltitude = *min;
+	map->maxAltitude = *max;
+	map->floodAltitude = 0.5f * diff;
+	map->mountAltitude = 0.75f * diff;
+	map->snowAltitude = 0.9f * diff;
+
+	s_cell* current;
+	for (j = 0; j < (*map).height; ++j) {
+		for (i = 0; i < (*map).width; ++i) {
+			int currentIndex = i + j * map->width;
+			current = &(map->grid[currentIndex]);
+			current->altitude -= *min;
+			//if this point is below the floodline...
+			if (current->altitude < map->floodAltitude) {
+				current->ground_type = GROUND_WATER;
+			}
+			//if this is above the mountain line...
+			else if (current->altitude > map->snowAltitude) {
+				current->ground_type = GROUND_SNOW;
+			}
+			//if this is above the mountain line...
+			else if (current->altitude > map->mountAltitude) {
+				current->ground_type = GROUND_MOUNTAIN;
+			}
+			//if this is regular land
+			else {
+				current->ground_type = GROUND_LAND;
+			}
+		}
+	}
 }
 
 /**
@@ -202,16 +234,6 @@ void fillMap(s_map* map, float *min, float *max)
  */
 int printMap(s_map* map, float min, float max, char* filename, int filename_len, short generateText)
 {
-	//set up some variables
-	float diff = max - min,
-		  flood = 0.5f,//flood level
-		  mount = 0.75f,//mountain level
-		  snow = 0.9f;//snow level
-
-	flood *= diff;
-	mount *= diff;
-	snow *= diff;
-
 	int i,j,k;
 	char bmpfile[filename_len + 4], txtfile[filename_len + 4];
 	strcpy(bmpfile, filename);
@@ -294,79 +316,40 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 		fputc((char)0, bmp);
 	}
 
+	float diff = map->maxAltitude - map->minAltitude;
+	float deltaSnow = diff - map->snowAltitude,
+		  deltaMount = diff - map->mountAltitude,
+		  deltaFlood = diff - map->floodAltitude;
 	//3.2 put in the elements of the array
-	s_color newcolor = color(0, 0, 0);
-	s_cell* current;
 	for (j = map->height - 1; j >= 0; j--) {//bitmaps start with the bottom row, and work their way up...
 		for (i = 0; i < map->width; i++) {//...but still go left to right
-			int directions, currentIndex;
-
-			currentIndex = i + j * map->width;
-			current = &(map->grid[currentIndex]);
-			current->altitude -= min;
+			s_color newcolor = color(0, 0, 0);
+			int currentIndex = i + j * map->width;
+			s_cell* current = &(map->grid[currentIndex]);
 			//if this point is below the floodline...
-			if (current->altitude < flood) {
-				current->ground_type = GROUND_WATER;
-				newcolor = lerp(waterlow, waterhigh, current->altitude / flood);
+			if (current->altitude < map->floodAltitude) {
+				newcolor = lerp(waterlow, waterhigh, current->altitude / map->floodAltitude);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > snow) {
-				current->ground_type = GROUND_SNOW;
-				newcolor = lerp(snowlow, snowhigh, (current->altitude - snow) / (diff - snow));
+			else if (current->altitude > map->snowAltitude) {
+				newcolor = lerp(snowlow, snowhigh, (current->altitude - map->snowAltitude) / deltaSnow);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > mount) {
-				current->ground_type = GROUND_MOUNTAIN;
-				newcolor = lerp(mountlow, mounthigh, (current->altitude - mount) / (diff - mount));
+			else if (current->altitude > map->mountAltitude) {
+				newcolor = lerp(mountlow, mounthigh, (current->altitude - map->mountAltitude) / deltaMount);
 			}
 			//if this is regular land
 			else {
-				current->ground_type = GROUND_LAND;
-				newcolor = lerp(landlow, landhigh, (current->altitude - flood) / (mount - flood));
+				newcolor = lerp(landlow, landhigh, (current->altitude - map->floodAltitude) / deltaFlood);
 			}
 
 			fputc((char)(newcolor.v[2]), bmp);//blue
 			fputc((char)(newcolor.v[1]), bmp);//green
 			fputc((char)(newcolor.v[0]), bmp);//red
 
-			if (!generateText)
-				continue;
-
-			directions = 0;
-			// WEST
-			if (i > 0 && map->grid[currentIndex - 1].altitude >= flood) {
-				directions |= BIT_CELL_WEST;
+			if (generateText) {
+				fprintf(txt, "%d %d %d %f\n", (*current).ground_type, i, j, ((*current).altitude - map->floodAltitude) * MAX_ALTITUDE / max);
 			}
-			// EAST
-			if (i < map->width - 1 && map->grid[currentIndex + 1].altitude - min >= flood) {
-				directions |= BIT_CELL_EAST;
-			}
-			// NORTH
-			if (j > 0 && map->grid[currentIndex - map->width].altitude - min >= flood) {
-				directions |= BIT_CELL_NORTH;
-			}
-			// SOUTH
-			if (j < map->height - 1 && map->grid[currentIndex + map->width].altitude >= flood) {
-				directions |= BIT_CELL_SOUTH;
-			}
-
-			// NORTH WEST
-			if (i > 0 && j > 0 && map->grid[currentIndex - 1 - map->width].altitude >= flood) {
-				directions |= BIT_CELL_NORTH_WEST;
-			}
-			// NORTH EAST
-			if (i < map->width - 1 && j > 0 && map->grid[currentIndex + 1 - map->width].altitude - min >= flood) {
-				directions |= BIT_CELL_NORTH_EAST;
-			}
-			// SOUTH EAST
-			if (i < map->width - 1 && j < map->height - 1 && map->grid[currentIndex + 1 + map->width].altitude - min >= flood) {
-				directions |= BIT_CELL_SOUTH_EAST;
-			}
-			// SOUTH WEST
-			if (i > 0 && j < map->height - 1 && map->grid[currentIndex -1 + map->width].altitude >= flood) {
-				directions |= BIT_CELL_SOUTH_WEST;
-			}
-			fprintf(txt, "%d %d %d %d %f\n", (*current).ground_type, i, j, directions, ((*current).altitude - flood) * MAX_ALTITUDE / max);
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {
@@ -377,18 +360,11 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 	//3.3 end the file
 	fclose(bmp);
 
-	if (generateText)
+	if (generateText) {
 		fclose(txt);
+	}
 
 	return 0;
-}
-
-/**
- * Shows the time spent to generate the map, just for benchmarks, kindof dummy
- */
-void printResult(time_t beginning, time_t end)
-{
-	printf("%d\n", (int) (end - beginning));
 }
 
 /**

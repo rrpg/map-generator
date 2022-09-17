@@ -26,6 +26,11 @@ typedef struct {
 	s_cell* grid;
 	int width;
 	int height;
+	float minAltitude;
+	float maxAltitude;
+	float floodAltitude;
+	float mountAltitude;
+	float snowAltitude;
 } s_map;
 
 s_map initMap(int width, int height);
