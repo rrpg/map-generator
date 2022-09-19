@@ -16,7 +16,6 @@ int main(int argc, char* argv[])
 	s_map map;
 	int c, pResult;
 	char* file;
-	short generateText;
 
 	int width, height, x, y;
 	width = MAP_WIDTH;
@@ -25,12 +24,8 @@ int main(int argc, char* argv[])
 	y = 0;
 	seed = time(NULL);
 	file = DEFAULT_FILENAME;
-	generateText = 0;
-	while ((c = getopt (argc, argv, "tw:x:y:s:h:f:")) != -1) {
+	while ((c = getopt (argc, argv, "w:x:y:s:h:f:")) != -1) {
 		switch (c) {
-			case 't':
-				generateText = 1;
-				break;
 			case 'w':
 				width = atoi(optarg);
 				break;
@@ -61,7 +56,10 @@ int main(int argc, char* argv[])
 
 	map = initMap(width, height, x, y);
 	fillMap(&map);
-	pResult = printMap(&map, file, strlen(file), generateText);
+	pResult = printMap(&map, file, strlen(file));
+	if (pResult == 0) {
+		pResult = exportMapToTiled(&map, file, strlen(file));
+	}
 
 	free(map.grid);
 

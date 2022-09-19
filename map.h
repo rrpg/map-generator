@@ -37,7 +37,7 @@ typedef struct {
 s_map initMap(int width, int height, int x, int y);
 void clearMap(s_map* map);
 void fillMap(s_map* map);
-int printMap(s_map* map, char* filename, int filename_len, short generateText);
-void printResult(time_t beginning, time_t end);
+int printMap(s_map* map, char* filename, int filename_len);
+int exportMapToTiled(s_map* map, char* filename, int filename_len);
 
 #define MIN(a, b) (a < b ? a : b)
