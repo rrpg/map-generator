@@ -19,11 +19,13 @@ unsigned int get_random_int(unsigned int max);
 /**
  * Creates a s_map instance, set its dimensions and the global size of the grid
  */
-s_map initMap(int width, int height)
+s_map initMap(int width, int height, int x, int y)
 {
 	s_map map;
 	map.width = width;
 	map.height = height;
+	map.x = x;
+	map.y = y;
 
 	map.grid = (s_cell*) malloc(height * width * sizeof(s_cell));
 
@@ -106,8 +108,8 @@ void fillMap(s_map* map)
 			// use threads here
 			for (k = 0; k < octaves; ++k) {
 				//get the x and y values. These are values from the grid in normal (simplex) space
-				x = (float)i * frequency;
-				y = (float)j * frequency;
+				x = (float)(map->x + i) * frequency;
+				y = (float)(map->y + j) * frequency;
 
 				//get the bottom-left corner of the simplex in skewed space
 				skew_value = (x + y) * general_skew;
