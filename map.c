@@ -329,15 +329,15 @@ int printMap(s_map* map, char* filename, int filename_len, short generateText)
 			int currentIndex = i + j * map->width;
 			s_cell* current = &(map->grid[currentIndex]);
 			//if this point is below the floodline...
-			if (current->altitude < map->floodAltitude) {
+			if (current->ground_type == GROUND_WATER) {
 				newcolor = lerp(waterlow, waterhigh, current->altitude / map->floodAltitude);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > map->snowAltitude) {
+			else if (current->ground_type == GROUND_SNOW) {
 				newcolor = lerp(snowlow, snowhigh, (current->altitude - map->snowAltitude) / deltaSnow);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > map->mountAltitude) {
+			else if (current->ground_type == GROUND_MOUNTAIN) {
 				newcolor = lerp(mountlow, mounthigh, (current->altitude - map->mountAltitude) / deltaMount);
 			}
 			//if this is regular land
