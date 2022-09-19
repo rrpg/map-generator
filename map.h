@@ -1,8 +1,7 @@
-#define VISUAL_DISPLAY_MODE 0x01
-#define GROUND_WATER 0x01
-#define GROUND_LAND 0x04
-#define GROUND_MOUNTAIN 0x08
-#define GROUND_SNOW 0x10
+#define GROUND_WATER 0
+#define GROUND_LAND 1
+#define GROUND_MOUNTAIN 2
+#define GROUND_SNOW 3
 
 #define BIT_CELL_NORTH  0x01
 #define BIT_CELL_EAST   0x02
@@ -38,7 +37,7 @@ typedef struct {
 s_map initMap(int width, int height, int x, int y);
 void clearMap(s_map* map);
 void fillMap(s_map* map);
-int printMap(s_map* map, char* filename, int filename_len, short generateText);
-void printResult(time_t beginning, time_t end);
+int printMap(s_map* map, char* filename, int filename_len);
+int exportMapToTiled(s_map* map, char* filename, int filename_len);
 
 #define MIN(a, b) (a < b ? a : b)

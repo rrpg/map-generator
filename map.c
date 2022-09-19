@@ -234,14 +234,11 @@ void fillMap(s_map* map)
 /**
  * Print the map in a BMP file
  */
-int printMap(s_map* map, char* filename, int filename_len, short generateText)
-{
+int printMap(s_map* map, char* filename, int filename_len) {
 	int i,j,k;
-	char bmpfile[filename_len + 4], txtfile[filename_len + 4];
+	char bmpfile[filename_len + 4];
 	strcpy(bmpfile, filename);
 	strcat(bmpfile, ".bmp");
-	strcpy(txtfile, filename);
-	strcat(txtfile, ".txt");
 
 	//these can be changed for interesting results
 	s_color waterlow, waterhigh, landlow, landhigh, mountlow, mounthigh, snowlow, snowhigh;
@@ -258,12 +255,10 @@ int printMap(s_map* map, char* filename, int filename_len, short generateText)
 	//3.0 output to file
 	//3.1 Begin the file
 	//3.1.1 open output file
-	FILE *bmp, *txt;
+	FILE *bmp;
 	bmp = fopen(bmpfile, "wb");
 
-	if (generateText)
-		txt = fopen(txtfile, "w");
-	if (bmp == NULL || (generateText && txt == NULL)){
+	if (bmp == NULL){
 		printf("Target file opening error");
 		return 1;
 	}
@@ -329,15 +324,15 @@ int printMap(s_map* map, char* filename, int filename_len, short generateText)
 			int currentIndex = i + j * map->width;
 			s_cell* current = &(map->grid[currentIndex]);
 			//if this point is below the floodline...
-			if (current->altitude < map->floodAltitude) {
+			if (current->ground_type == GROUND_WATER) {
 				newcolor = lerp(waterlow, waterhigh, current->altitude / map->floodAltitude);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > map->snowAltitude) {
+			else if (current->ground_type == GROUND_SNOW) {
 				newcolor = lerp(snowlow, snowhigh, (current->altitude - map->snowAltitude) / deltaSnow);
 			}
 			//if this is above the mountain line...
-			else if (current->altitude > map->mountAltitude) {
+			else if (current->ground_type == GROUND_MOUNTAIN) {
 				newcolor = lerp(mountlow, mounthigh, (current->altitude - map->mountAltitude) / deltaMount);
 			}
 			//if this is regular land
@@ -348,10 +343,6 @@ int printMap(s_map* map, char* filename, int filename_len, short generateText)
 			fputc((char)(newcolor.v[2]), bmp);//blue
 			fputc((char)(newcolor.v[1]), bmp);//green
 			fputc((char)(newcolor.v[0]), bmp);//red
-
-			if (generateText) {
-				fprintf(txt, "%d %d %d %f\n", (*current).ground_type, i, j, current->altitude - map->floodAltitude);
-			}
 		}
 		//round off the row
 		for (k = 0; k < ((*map).width % 4); k++) {
@@ -362,13 +353,43 @@ int printMap(s_map* map, char* filename, int filename_len, short generateText)
 	//3.3 end the file
 	fclose(bmp);
 
-	if (generateText) {
-		fclose(txt);
-	}
-
 	return 0;
 }
 
+int exportMapToTiled(s_map* map, char* filename, int filename_len) {
+	char txtfile[filename_len + 4];
+	strcpy(txtfile, filename);
+	strcat(txtfile, ".lvl");
+
+	FILE *txt;
+
+	txt = fopen(txtfile, "w");
+	if (txt == NULL) {
+		printf("Target file opening error");
+		return 1;
+	}
+
+	fprintf(txt, "size %d %d\n", map->width, map->height);
+	fprintf(txt, "layerstart ground 0.0\n");
+	fprintf(txt, "atlas tiles.png 4 1\n");
+
+	for (int j = 0; j < map->height; j++) {
+		for (int i = 0; i < map->width; i++) {
+			int currentIndex = i + j * map->width;
+			s_cell* current = &(map->grid[currentIndex]);
+			fprintf(txt, "%d", current->ground_type+1);
+			if (j < map->height - 1 || i < map->width - 1) {
+				fprintf(txt, ",");
+			}
+		}
+		fprintf(txt, "\n");
+	}
+
+	fprintf(txt, "layerend\n");
+
+	fclose(txt);
+	return 0;
+}
 /**
  * Faster version of the floor function
  */
