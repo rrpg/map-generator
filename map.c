@@ -41,7 +41,7 @@ void clearMap(s_map* map)
 /**
  * Generate the map using the simplex noise algorithm.
  */
-void fillMap(s_map* map, float *min, float *max)
+void fillMap(s_map* map)
 {
 	//set up some variables
 	int octaves = 16;
@@ -66,8 +66,8 @@ void fillMap(s_map* map, float *min, float *max)
 		cornertx, cornerty,
 		gradb, gradm, gradt;//arrays should be used with all of these, but this is easier to read
 
-	*min = 100000.0f;
-	*max = -100000.0f;
+	float min = 100000.0f;
+	float max = -100000.0f;
 
 	//set up the gradient table with 8 equally distributed angles around the unit circle
 	float gradients[8][2];
@@ -187,18 +187,18 @@ void fillMap(s_map* map, float *min, float *max)
 			(*map).grid[i + j * (*map).width].altitude = pixel_value;
 
 			// do some quick checks
-			if (pixel_value < *min) {
-				*min = pixel_value;
+			if (pixel_value < min) {
+				min = pixel_value;
 			}
-			else if (pixel_value > *max) {
-				*max = pixel_value;
+			else if (pixel_value > max) {
+				max = pixel_value;
 			}
 		}
 	}
 	// Define the ground types
-	float diff = *max - *min;
-	map->minAltitude = *min;
-	map->maxAltitude = *max;
+	float diff = max - min;
+	map->minAltitude = min;
+	map->maxAltitude = max;
 	map->floodAltitude = 0.5f * diff;
 	map->mountAltitude = 0.75f * diff;
 	map->snowAltitude = 0.9f * diff;
@@ -208,7 +208,7 @@ void fillMap(s_map* map, float *min, float *max)
 		for (i = 0; i < (*map).width; ++i) {
 			int currentIndex = i + j * map->width;
 			current = &(map->grid[currentIndex]);
-			current->altitude -= *min;
+			current->altitude -= min;
 			//if this point is below the floodline...
 			if (current->altitude < map->floodAltitude) {
 				current->ground_type = GROUND_WATER;
@@ -232,7 +232,7 @@ void fillMap(s_map* map, float *min, float *max)
 /**
  * Print the map in a BMP file
  */
-int printMap(s_map* map, float min, float max, char* filename, int filename_len, short generateText)
+int printMap(s_map* map, char* filename, int filename_len, short generateText)
 {
 	int i,j,k;
 	char bmpfile[filename_len + 4], txtfile[filename_len + 4];
@@ -348,7 +348,7 @@ int printMap(s_map* map, float min, float max, char* filename, int filename_len,
 			fputc((char)(newcolor.v[0]), bmp);//red
 
 			if (generateText) {
-				fprintf(txt, "%d %d %d %f\n", (*current).ground_type, i, j, ((*current).altitude - map->floodAltitude) * MAX_ALTITUDE / max);
+				fprintf(txt, "%d %d %d %f\n", (*current).ground_type, i, j, current->altitude - map->floodAltitude);
 			}
 		}
 		//round off the row
