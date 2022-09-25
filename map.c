@@ -7,6 +7,7 @@
 #include "color.h"
 #include "map.h"
 
+const unsigned int PROPERTY_WALKABLE = 0x01;
 
 /*
  * Local functions
@@ -369,10 +370,10 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len) {
 		return 1;
 	}
 
+	printf("Export map\n");
 	fprintf(txt, "size %d %d\n", map->width, map->height);
 	fprintf(txt, "layerstart ground 0.0\n");
 	fprintf(txt, "atlas tiles.png 4 1\n");
-
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
@@ -384,8 +385,26 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len) {
 		}
 		fprintf(txt, "\n");
 	}
-
 	fprintf(txt, "layerend\n");
+
+	printf("Export properties\n");
+	fprintf(txt, "layerpropertystart properties\n");
+	for (int j = 0; j < map->height; j++) {
+		for (int i = 0; i < map->width; i++) {
+			int currentIndex = i + j * map->width;
+			s_cell* current = &(map->grid[currentIndex]);
+			unsigned int properties = 0;
+			if (current->ground_type != GROUND_WATER) {
+				properties |= PROPERTY_WALKABLE;
+			}
+			fprintf(txt, "%u", properties);
+			if (j < map->height - 1 || i < map->width - 1) {
+				fprintf(txt, ",");
+			}
+		}
+		fprintf(txt, "\n");
+	}
+	fprintf(txt, "layerpropertyend\n");
 
 	fclose(txt);
 	return 0;
