@@ -8,6 +8,8 @@
 #include "map.h"
 
 const unsigned int PROPERTY_WALKABLE = 0x01;
+const int minFightProperty = 0;
+const int maxFightProperty = 10;
 
 /*
  * Local functions
@@ -357,10 +359,10 @@ int printMap(s_map* map, char* filename, int filename_len) {
 	return 0;
 }
 
-int exportMapToTiled(s_map* map, char* filename, int filename_len) {
+int exportMapToTiled(s_map* map, char* filename, int filename_len, time_t seed) {
 	char txtfile[filename_len + 4];
 	strcpy(txtfile, filename);
-	strcat(txtfile, ".lvl");
+	strcat(txtfile, ".map");
 
 	FILE *txt;
 
@@ -371,14 +373,17 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len) {
 	}
 
 	printf("Export map\n");
+	fprintf(txt, "# seed: %ld\n", seed);
 	fprintf(txt, "size %d %d\n", map->width, map->height);
 	fprintf(txt, "layerstart ground 0.0\n");
-	fprintf(txt, "atlas tiles.png 4 1\n");
+	fprintf(txt, "atlas tiles.png 5 1\n");
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
 			s_cell* current = &(map->grid[currentIndex]);
-			fprintf(txt, "%d", current->ground_type+1);
+			// The ground types in tiled are 1-indexed (so +1 is needed) and the
+			// 1st (value 0) is reserved for empty tile (so +1 is needed again)
+			fprintf(txt, "%d", current->ground_type+2);
 			if (j < map->height - 1 || i < map->width - 1) {
 				fprintf(txt, ",");
 			}
@@ -388,16 +393,34 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len) {
 	fprintf(txt, "layerend\n");
 
 	printf("Export properties\n");
-	fprintf(txt, "layerpropertystart properties\n");
+	fprintf(txt, "layerpropertystart walkable\n");
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
 			s_cell* current = &(map->grid[currentIndex]);
-			unsigned int properties = 0;
+			int properties = 0;
 			if (current->ground_type != GROUND_WATER) {
-				properties |= PROPERTY_WALKABLE;
+				properties = 1;
 			}
-			fprintf(txt, "%u", properties);
+			fprintf(txt, "%d", properties);
+			if (j < map->height - 1 || i < map->width - 1) {
+				fprintf(txt, ",");
+			}
+		}
+		fprintf(txt, "\n");
+	}
+	fprintf(txt, "layerpropertyend\n");
+
+	fprintf(txt, "layerpropertystart fightProbabilty\n");
+	for (int j = 0; j < map->height; j++) {
+		for (int i = 0; i < map->width; i++) {
+			int currentIndex = i + j * map->width;
+			s_cell* current = &(map->grid[currentIndex]);
+			int properties = 0;
+			if (current->ground_type != GROUND_WATER) {
+				properties = rand() % (maxFightProperty - minFightProperty) + minFightProperty;
+			}
+			fprintf(txt, "%d", properties);
 			if (j < map->height - 1 || i < map->width - 1) {
 				fprintf(txt, ",");
 			}

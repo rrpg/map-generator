@@ -58,7 +58,7 @@ int main(int argc, char* argv[])
 	fillMap(&map);
 	pResult = printMap(&map, file, strlen(file));
 	if (pResult == 0) {
-		pResult = exportMapToTiled(&map, file, strlen(file));
+		pResult = exportMapToTiled(&map, file, strlen(file), seed);
 	}
 
 	free(map.grid);
