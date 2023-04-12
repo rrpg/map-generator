@@ -362,7 +362,7 @@ int printMap(s_map* map, char* filename, int filename_len) {
 int exportMapToTiled(s_map* map, char* filename, int filename_len, time_t seed) {
 	char txtfile[filename_len + 4];
 	strcpy(txtfile, filename);
-	strcat(txtfile, ".map");
+	strcat(txtfile, ".tmx");
 
 	FILE *txt;
 
@@ -373,27 +373,35 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len, time_t seed) 
 	}
 
 	printf("Export map\n");
-	fprintf(txt, "# seed: %ld\n", seed);
-	fprintf(txt, "size %d %d\n", map->width, map->height);
-	fprintf(txt, "layerstart ground 0.0\n");
-	fprintf(txt, "atlas tiles.png 5 1\n");
+	fprintf(txt, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+	fprintf(txt, "<!-- seed: %ld -->\n", seed);
+	// XXX make tile width and height configurable
+	fprintf(txt, "<map version=\"1.5\" tiledversion=\"1.7.2\" orientation=\"orthogonal\" renderorder=\"right-down\" width=\"%d\" height=\"%d\" tilewidth=\"16\" tileheight=\"16\" infinite=\"0\">\n", map->width, map->height);
+	fprintf(txt, "<tileset firstgid=\"1\" source=\"tiles.tsx\"/>\n");
+	fprintf(txt, "<layer id=\"1\" name=\"ground\" width=\"%d\" height=\"%d\">\n", map->width, map->height);
+	fprintf(txt, "<properties>\n");
+	fprintf(txt, "<property name=\"Z\" type=\"float\" value=\"0\"/>\n");
+	fprintf(txt, "</properties>\n");
+	fprintf(txt, "<data encoding=\"csv\">\n");
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
 			s_cell* current = &(map->grid[currentIndex]);
 			// The ground types in tiled are 1-indexed (so +1 is needed) and the
 			// 1st (value 0) is reserved for empty tile (so +1 is needed again)
-			fprintf(txt, "%d", current->ground_type+2);
+			fprintf(txt, "%d", current->ground_type);
 			if (j < map->height - 1 || i < map->width - 1) {
 				fprintf(txt, ",");
 			}
 		}
 		fprintf(txt, "\n");
 	}
-	fprintf(txt, "layerend\n");
+	fprintf(txt, "</data>\n");
+	fprintf(txt, "</layer>\n");
 
 	printf("Export properties\n");
-	fprintf(txt, "layerpropertystart walkable\n");
+	fprintf(txt, "<layer id=\"2\" name=\"property-walkable\" width=\"%d\" height=\"%d\">\n", map->width, map->height);
+	fprintf(txt, "<data encoding=\"csv\">\n");
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
@@ -409,9 +417,11 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len, time_t seed) 
 		}
 		fprintf(txt, "\n");
 	}
-	fprintf(txt, "layerpropertyend\n");
+	fprintf(txt, "</data>\n");
+	fprintf(txt, "</layer>\n");
 
-	fprintf(txt, "layerpropertystart fightProbabilty\n");
+	fprintf(txt, "<layer id=\"3\" name=\"property-fightProbability\" width=\"%d\" height=\"%d\">\n", map->width, map->height);
+	fprintf(txt, "<data encoding=\"csv\">\n");
 	for (int j = 0; j < map->height; j++) {
 		for (int i = 0; i < map->width; i++) {
 			int currentIndex = i + j * map->width;
@@ -427,7 +437,9 @@ int exportMapToTiled(s_map* map, char* filename, int filename_len, time_t seed) 
 		}
 		fprintf(txt, "\n");
 	}
-	fprintf(txt, "layerpropertyend\n");
+	fprintf(txt, "</data>\n");
+	fprintf(txt, "</layer>\n");
+	fprintf(txt, "</map>\n");
 
 	fclose(txt);
 	return 0;

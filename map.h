@@ -1,7 +1,7 @@
-#define GROUND_WATER 0
-#define GROUND_LAND 1
-#define GROUND_MOUNTAIN 2
-#define GROUND_SNOW 3
+#define GROUND_WATER 1
+#define GROUND_LAND 2
+#define GROUND_MOUNTAIN 3
+#define GROUND_SNOW 4
 
 #define BIT_CELL_NORTH  0x01
 #define BIT_CELL_EAST   0x02
